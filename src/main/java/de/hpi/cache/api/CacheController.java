@@ -5,6 +5,7 @@ import de.hpi.cache.persistence.ShopOffer;
 import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
 import de.hpi.cache.services.CacheService;
 import de.hpi.cache.services.IdealoBridge;
+import de.hpi.cache.services.WarmupService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequiredArgsConstructor
 public class CacheController {
     private final CacheService cacheService;
-    private final IdealoBridge idealoBridge;
+    private final WarmupService warmupService;
     private final ShopOfferRepositoryImpl shopOfferRepository;
 
     @RequestMapping(value = "/getOffer/{shopID}", method = RequestMethod.GET, produces = "application/json")
@@ -39,6 +40,6 @@ public class CacheController {
 
     @RequestMapping(value = "/warmup/{shopID}", method = GET)
     public void warmup(@PathVariable long shopID){
-
+        getWarmupService().warmup(shopID);
     }
 }

@@ -3,9 +3,12 @@ package de.hpi.cache.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -17,7 +20,7 @@ public class IdealoOffer {
     private String offerKey;
     private long shopId;
     private String brandName;
-    private Map<String, String> categoryPaths;
+    private List<String> categoryPaths;
     private Map<String, String> productSearchtext;
     private String ean;
     private String han;
@@ -26,6 +29,40 @@ public class IdealoOffer {
     private Map<String, Double> prices;
     private Map<String, String> descriptions;
     private Map<String, String> urls;
-    private Map<String, String> hans;
-    private Map<String, String>  eans;
+    private List<String> hans;
+    private List<String>  eans;
+
+    @JsonCreator
+    public IdealoOffer(
+            @JsonProperty("offerKey") String offerKey,
+            @JsonProperty("shopId") long shopId,
+            @JsonProperty("brandName") String brandName,
+            @JsonProperty("categoryPaths") List<String> categoryPaths,
+            @JsonProperty("productSearchtext") Map<String, String> productSearchtext,
+            @JsonProperty("ean") String ean,
+            @JsonProperty("han") String han,
+            @JsonProperty("sku") String sku,
+            @JsonProperty("titles") Map<String, String> titles,
+            @JsonProperty("prices") Map<String, Double> prices,
+            @JsonProperty("descriptions") Map<String, String> descriptions,
+            @JsonProperty("urls") Map<String, String> urls,
+            @JsonProperty("hans") List<String> hans,
+            @JsonProperty("eans") List<String>  eans
+
+    ) {
+        setOfferKey(offerKey);
+        setShopId(shopId);
+        setBrandName(brandName);
+        setCategoryPaths(categoryPaths);
+        setProductSearchtext(productSearchtext);
+        setEan(ean);
+        setHan(han);
+        setSku(sku);
+        setTitles(titles);
+        setPrices(prices);
+        setDescriptions(descriptions);
+        setUrls(urls);
+        setHans(hans);
+        setEans(eans);
+    }
 }
