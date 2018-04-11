@@ -1,5 +1,6 @@
 package de.hpi.cache.api;
 
+import de.hpi.cache.dto.IdealoOffer;
 import de.hpi.cache.persistence.ShopOffer;
 import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
 import de.hpi.cache.services.CacheService;
@@ -8,9 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -23,15 +22,23 @@ public class CacheController {
     private final IdealoBridge idealoBridge;
     private final ShopOfferRepositoryImpl shopOfferRepository;
 
-    @RequestMapping(value = "/getOffer/{shopID}", method = GET)
-    public String getOffer(@PathVariable long shopID){
-        getShopOfferRepository().save(9201, new ShopOffer());
-        return "";
+    @RequestMapping(value = "/getOffer/{shopID}", method = RequestMethod.GET, produces = "application/json")
+    public IdealoOffer getOffer(@PathVariable long shopID, @RequestParam(value = "phase") short phase){
+        return getShopOfferRepository().getOffer(shopID, phase);
+    }
+
+    @RequestMapping(value = "deleteOffer/{shopID}", method = RequestMethod.GET)
+    public void deleteOffer(@PathVariable long shopID, @RequestParam(value = "offerKey") String offerKey){
+        getShopOfferRepository().deleteOffer(shopID, offerKey);
+    }
+
+    @RequestMapping(value = "deleteAll/{shopID}", method = RequestMethod.GET)
+    public void deleteAll(@PathVariable long shopID){
+        getShopOfferRepository().deleteAll(shopID);
     }
 
     @RequestMapping(value = "/warmup/{shopID}", method = GET)
     public void warmup(@PathVariable long shopID){
-        getIdealoBridge().getOffers(shopID);
 
     }
 }

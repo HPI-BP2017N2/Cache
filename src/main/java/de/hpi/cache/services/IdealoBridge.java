@@ -10,12 +10,10 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +31,8 @@ public class IdealoBridge {
     private final IdealoBridgeProperties properties;
 
     public String getOffers(long shopID) {
-        String inputStream = (getOAuthRestTemplate().getForObject(getOffersURI(shopID), String.class)); //getForObject(getOffersURI(shopID), BufferedInputStream.class));
+        String inputStream = (getOAuthRestTemplate().getForObject(getOffersURI(shopID), String.class));
         System.out.println(inputStream);
-        //InputStream bufferedInputStream = new BufferedInputStream(inputStream);
         InputStream stream = new ByteArrayInputStream(inputStream.getBytes(StandardCharsets.UTF_8));
         try {
             processStream(stream);
@@ -43,10 +40,6 @@ public class IdealoBridge {
             e.printStackTrace();
         }
 
-        //Iterator b = getOAuthRestTemplate().get
-        //System.out.println(a.hasNext());
-        //return getOAuthRestTemplate().getForObject(getOffersURI(shopID), ShopIDToRootUrlResponse
-        //.class).getShopUrl();
         return null;
     }
 
@@ -64,12 +57,12 @@ public class IdealoBridge {
         try (final JsonParser jsonParser = jsonFactory.createJsonParser(inputStream)) {
             final JsonToken arrayToken = jsonParser.nextToken();
             if (arrayToken == null) {
-                // TODO: Return or throw exception.
+
                 return;
             }
 
             if (!JsonToken.START_ARRAY.equals(arrayToken)) {
-                // TODO: Return or throw exception.
+
                 return;
             }
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IdealoOffer {
+    @Indexed
     private String offerKey;
     private long shopId;
     private String brandName;
