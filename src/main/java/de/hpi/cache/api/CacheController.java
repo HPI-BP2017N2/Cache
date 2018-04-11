@@ -1,5 +1,7 @@
 package de.hpi.cache.api;
 
+import de.hpi.cache.persistence.ShopOffer;
+import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
 import de.hpi.cache.services.CacheService;
 import de.hpi.cache.services.IdealoBridge;
 import lombok.AccessLevel;
@@ -19,10 +21,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class CacheController {
     private final CacheService cacheService;
     private final IdealoBridge idealoBridge;
+    private final ShopOfferRepositoryImpl shopOfferRepository;
 
     @RequestMapping(value = "/getOffer/{shopID}", method = GET)
     public String getOffer(@PathVariable long shopID){
-        getCacheService();
+        getShopOfferRepository().save(9201, new ShopOffer());
         return "";
     }
 
