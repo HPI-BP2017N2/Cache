@@ -19,10 +19,16 @@ public class ShopOfferRepositoryImpl implements IShopOfferRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    // convenience
     @Override
     public IdealoOffer getOffer(long shopId, short phase) {
-        IdealoOffer idealoOffer = getMongoTemplate().findOne(query(where("phase").is(phase)), IdealoOffer.class , Long.toString(shopId));
-        getMongoTemplate().updateFirst(query(where("offerKey").is(idealoOffer.getOfferKey())), update("phase", phase + 1), Long.toString(shopId));
+        IdealoOffer idealoOffer = getMongoTemplate()
+                .findOne(query(where("phase").is(phase)), IdealoOffer.class , Long.toString(shopId));
+        if(idealoOffer != null) {
+            getMongoTemplate()
+                    .updateFirst(query(where("offerKey")
+                            .is(idealoOffer.getOfferKey())), update("phase", phase + 1), Long.toString(shopId));
+        }
         return idealoOffer;
     }
 
