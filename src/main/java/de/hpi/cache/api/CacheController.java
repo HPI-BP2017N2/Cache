@@ -1,6 +1,6 @@
 package de.hpi.cache.api;
 
-import de.hpi.cache.dto.IdealoOffer;
+import de.hpi.cache.persistence.ShopOffer;
 import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
 import de.hpi.cache.services.CacheService;
 import lombok.AccessLevel;
@@ -18,7 +18,7 @@ public class CacheController {
     private final ShopOfferRepositoryImpl shopOfferRepository;
 
     @RequestMapping(value = "/getOffer/{shopID}", method = RequestMethod.GET, produces = "application/json")
-    public IdealoOffer getOffer(@PathVariable long shopID, @RequestParam(value = "phase") short phase){
+    public ShopOffer getOffer(@PathVariable long shopID, @RequestParam(value = "phase") byte phase){
         return getCacheService().getOffer(shopID, phase);
     }
 

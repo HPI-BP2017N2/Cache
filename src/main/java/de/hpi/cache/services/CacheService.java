@@ -1,11 +1,12 @@
 package de.hpi.cache.services;
 
-import de.hpi.cache.dto.IdealoOffer;
-import de.hpi.cache.dto.OfferList;
+import de.hpi.cache.persistence.ShopOffer;
 import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,16 @@ public class CacheService {
 
     private ShopOfferRepositoryImpl repository;
 
+    private static final Logger logger = LogManager.getLogger(CacheService.class);
+
+
     @Autowired
     public CacheService(IdealoBridge idealoBridge, ShopOfferRepositoryImpl shopOfferRepository) {
         setIdealoBridge(idealoBridge);
         setRepository(shopOfferRepository);
     }
 
-    public IdealoOffer getOffer(long shopId, short phase) {
+    public ShopOffer getOffer(long shopId, byte phase) {
         return getRepository().getOffer(shopId, phase);
     }
 
@@ -37,8 +41,11 @@ public class CacheService {
     }
 
     public void warmup(long shopId){
-        OfferList offerList =  getIdealoBridge().getOffers(shopId);
-        System.out.println(offerList.getFirst().getOfferKey().get("value"));
+        deleteAll(shopId);
+        logger.debug("Started fetching shop {}", shopId);
+        getRepository().createCollection(shopId);
+        getIdealoBridge().getOffers(shopId);
+        logger.debug("Fetched shop {}.", shopId);
     }
 
 

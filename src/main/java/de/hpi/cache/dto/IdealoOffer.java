@@ -1,5 +1,6 @@
 package de.hpi.cache.dto;
 
+import de.hpi.cache.persistence.ShopOffer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,20 +16,45 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IdealoOffer {
     @Indexed
-    private String offerKey;
-    private long shopId;
-    private String brandName;
-    private List<String> categoryPaths;
-    private String productSearchtext;
-    private String ean;
-    private String han;
-    private String sku;
-    private Map<String, String> titles;
-    private Map<String, Double> prices;
-    private Map<String, String> descriptions;
-    private Map<String, String> urls;
-    private List<String> hans;
-    private List<String> eans;
+    private Property<String> offerKey;
+    private Property<Long> shopId;
+    private Property<String> brandName;
+    private Property<List<String>> categoryPaths;
+    private Property<String> productSearchtext;
+    private Property<String> ean;
+    private Property<String> han;
+    private Property<String> sku;
+    private Property<Map<String, String>> titles;
+    private Property<Map<String, Double>> prices;
+    private Property<Map<String, String>> descriptions;
+    private Property<Map<String, String>> urls;
+    private Property<List<String>> hans;
+    private Property<List<String>> eans;
 
 
+    public ShopOffer toShopOffer() {
+        ShopOffer shopOffer = new ShopOffer();
+        shopOffer.setOfferKey(getPropertyValue(getOfferKey()));
+        shopOffer.setShopId(getPropertyValue(getShopId()));
+        shopOffer.setBrandName(getPropertyValue(getBrandName()));
+        shopOffer.setCategoryPaths(getPropertyValue(getCategoryPaths()));
+        shopOffer.setProductSearchtext(getPropertyValue(getProductSearchtext()));
+        shopOffer.setEan(getPropertyValue(getEan()));
+        shopOffer.setHan(getPropertyValue(getHan()));
+        shopOffer.setSku(getPropertyValue(getSku()));
+        shopOffer.setTitles(getPropertyValue(getTitles()));
+        shopOffer.setPrices(getPropertyValue(getPrices()));
+        shopOffer.setDescriptions(getPropertyValue(getDescriptions()));
+        shopOffer.setUrls(getPropertyValue(getUrls()));
+        shopOffer.setHans(getPropertyValue(getHans()));
+        shopOffer.setEans(getPropertyValue(getEans()));
+
+        return shopOffer;
+    }
+
+    private <T> T getPropertyValue(Property<T> property){
+        return (property == null)? null : property.getValue();
+    }
 }
+
+

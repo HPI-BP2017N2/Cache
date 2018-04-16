@@ -1,6 +1,5 @@
 package de.hpi.cache.persistence.repositories;
 
-import de.hpi.cache.dto.IdealoOffer;
 import de.hpi.cache.persistence.ShopOffer;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,9 +20,9 @@ public class ShopOfferRepositoryImpl implements IShopOfferRepository {
 
     // convenience
     @Override
-    public IdealoOffer getOffer(long shopId, short phase) {
-        IdealoOffer idealoOffer = getMongoTemplate()
-                .findOne(query(where("phase").is(phase)), IdealoOffer.class , Long.toString(shopId));
+    public ShopOffer getOffer(long shopId, byte phase) {
+        ShopOffer idealoOffer = getMongoTemplate()
+                .findOne(query(where("phase").is(phase)), ShopOffer.class , Long.toString(shopId));
         if(idealoOffer != null) {
             getMongoTemplate()
                     .updateFirst(query(where("offerKey")
@@ -40,6 +39,7 @@ public class ShopOfferRepositoryImpl implements IShopOfferRepository {
 
     @Override
     public void save(long shopId, ShopOffer shopOffer) {
+
         getMongoTemplate().insert(shopOffer, Long.toString(shopId));
     }
 

@@ -1,19 +1,30 @@
 package de.hpi.cache.persistence;
 
-import de.hpi.cache.dto.IdealoOffer;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.annotation.Id;
 
-@Getter
+import java.util.List;
+import java.util.Map;
+
 @Setter
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ShopOffer extends IdealoOffer {
+@Getter
+public class ShopOffer {
 
-    @Indexed
-    private short phase;
-
+    @Id
+    private String offerKey;
+    private Long shopId;
+    private String brandName;
+    private List<String> categoryPaths;
+    private String productSearchtext;
+    private String ean;
+    private String han;
+    private String sku;
+    private Map<String, String> titles;
+    private Map<String, Double> prices;
+    private Map<String, String> descriptions;
+    private Map<String, String> urls;
+    private List<String> hans;
+    private List<String> eans;
+    private byte phase = 0;
 }
