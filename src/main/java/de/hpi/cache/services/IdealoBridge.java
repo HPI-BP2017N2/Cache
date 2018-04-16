@@ -1,5 +1,6 @@
 package de.hpi.cache.services;
 
+import de.hpi.cache.dto.OfferList;
 import de.hpi.cache.properties.IdealoBridgeProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,10 +25,11 @@ public class IdealoBridge {
 
     private final IdealoBridgeProperties properties;
 
-    public InputStream getOffers(long shopID) {
-        String inputStream = (getOAuthRestTemplate().getForObject(getOffersURI(shopID), String.class));
-        InputStream stream = new ByteArrayInputStream(inputStream.getBytes(StandardCharsets.UTF_8));
-        return stream;
+    public OfferList getOffers(long shopID) {
+        //String test = (getOAuthRestTemplate().getForObject(getOffersURI(shopID), String.class));
+        //System.out.println(test.substring(0, 100));
+        //return null;
+        return getOAuthRestTemplate().getForObject(getOffersURI(shopID), OfferList.class);
     }
 
     private URI getOffersURI(long shopID) {
