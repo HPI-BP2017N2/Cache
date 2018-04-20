@@ -2,7 +2,7 @@ package de.hpi.cache.persistence.repositories;
 
 import de.hpi.cache.persistence.ShopOffer;
 
-public interface IShopOfferRepository {
+public interface ShopOfferRepository {
 
     ShopOffer getOffer(long shopId, byte phase);
     void deleteOffer(long shopId, String offerKey);

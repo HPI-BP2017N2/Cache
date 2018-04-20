@@ -3,7 +3,7 @@ package de.hpi.cache.persistence.repositories;
 import de.hpi.cache.persistence.ShopOffer;
 import lombok.AccessLevel;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,10 +13,10 @@ import static org.springframework.data.mongodb.core.query.Update.update;
 
 @Repository
 @Getter(AccessLevel.PRIVATE)
-public class ShopOfferRepositoryImpl implements IShopOfferRepository {
+@RequiredArgsConstructor
+public class ShopOfferRepositoryImpl implements ShopOfferRepository {
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     // convenience
     @Override
@@ -25,7 +25,7 @@ public class ShopOfferRepositoryImpl implements IShopOfferRepository {
                 .findOne(query(where("phase").is(phase)), ShopOffer.class , Long.toString(shopId));
         if(idealoOffer != null) {
             getMongoTemplate()
-                    .updateFirst(query(where("offerKey")
+                    .updateFirst(query(where("_id")
                             .is(idealoOffer.getOfferKey())), update("phase", phase + 1), Long.toString(shopId));
         }
         return idealoOffer;

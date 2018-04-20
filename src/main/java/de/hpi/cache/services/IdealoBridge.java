@@ -1,7 +1,8 @@
 package de.hpi.cache.services;
 
 import de.hpi.cache.dto.IdealoOffer;
-import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
+import de.hpi.cache.dto.IdealoOfferList;
+import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import de.hpi.cache.properties.IdealoBridgeProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,12 +15,10 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -36,12 +35,19 @@ public class IdealoBridge {
 
     private static final Logger logger = LogManager.getLogger(IdealoBridge.class);
 
-    @Autowired
-    private ShopOfferRepositoryImpl repository;
+    private final ShopOfferRepository repository;
 
     public void getOffers(long shopID) {
-        String stream = getOAuthRestTemplate().getForObject(getOffersURI(shopID), String.class);
-        processStream(new ByteArrayInputStream(stream.getBytes()), shopID);
+        // OfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopID), IdealoOffer.class);
+        IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopID), IdealoOfferList.class);
+
+        for (IdealoOffer offer : offers) {
+            getRepository().save(shopID, offer.toShopOffer());
+        }
+        /*while (offers.hasNext()) {
+            IdealoOffer offer = offers.next();
+            getRepository().save(shopID, offer.toShopOffer());
+        }*/
     }
 
     private URI getOffersURI(long shopID) {

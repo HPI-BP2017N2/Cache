@@ -2,8 +2,8 @@ package de.hpi.cache.properties;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +16,12 @@ import org.springframework.web.client.RestTemplate;
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
 @Configuration
+@RequiredArgsConstructor
 @EnableOAuth2Client
 @EnableConfigurationProperties(IdealoBridgeProperties.class)
 public class OAuthConfig {
 
-    @Autowired
-    private IdealoBridgeProperties clientProperties;
+    private final  IdealoBridgeProperties clientProperties;
 
     @Bean
     public RestTemplate oAuthRestTemplate() {
