@@ -30,6 +30,8 @@ public class IdealoOffer {
     private Property<Map<String, String>> urls;
     private Property<List<String>> hans;
     private Property<List<String>> eans;
+    private Property<Map<String, String>> smallPicture;
+    private Property<Map<String, List<String>>> imageUrls;
 
 
     public ShopOffer toShopOffer() {
@@ -48,6 +50,8 @@ public class IdealoOffer {
         shopOffer.setUrls(getPropertyValue(getUrls()));
         shopOffer.setHans(getPropertyValue(getHans()));
         shopOffer.setEans(getPropertyValue(getEans()));
+        shopOffer.setSmallPicture(getPropertyValue(getSmallPicture()));
+        shopOffer.setImageUrls(getPropertyValue(getImageUrls()));
 
         return shopOffer;
     }

@@ -10,17 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 @Getter(AccessLevel.PRIVATE)
@@ -38,16 +31,11 @@ public class IdealoBridge {
     private final ShopOfferRepository repository;
 
     public void getOffers(long shopID) {
-        // OfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopID), IdealoOffer.class);
         IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopID), IdealoOfferList.class);
 
         for (IdealoOffer offer : offers) {
             getRepository().save(shopID, offer.toShopOffer());
         }
-        /*while (offers.hasNext()) {
-            IdealoOffer offer = offers.next();
-            getRepository().save(shopID, offer.toShopOffer());
-        }*/
     }
 
     private URI getOffersURI(long shopID) {
@@ -56,32 +44,6 @@ public class IdealoBridge {
                 .build()
                 .encode()
                 .toUri();
-    }
-
-    private void processStream(InputStream inputStream, long shopId) {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final JsonFactory jsonFactory = objectMapper.getJsonFactory();
-        try (final JsonParser jsonParser = jsonFactory.createJsonParser(inputStream)) {
-            final JsonToken arrayToken = jsonParser.nextToken();
-            if (arrayToken == null) {
-                logger.error("No shop data received for shop {}", shopId);
-                return;
-            }
-
-            if (!JsonToken.START_ARRAY.equals(arrayToken)) {
-                logger.error("Malformed shop data received for shop {}", shopId);
-                return;
-            }
-
-            while (JsonToken.START_OBJECT.equals(jsonParser.nextToken())) {
-                getRepository().save(shopId, jsonParser.readValueAs(IdealoOffer.class).toShopOffer());
-            }
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
 }

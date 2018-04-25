@@ -39,7 +39,6 @@ public class ShopOfferRepositoryImpl implements ShopOfferRepository {
 
     @Override
     public void save(long shopId, ShopOffer shopOffer) {
-
         getMongoTemplate().insert(shopOffer, Long.toString(shopId));
     }
 
