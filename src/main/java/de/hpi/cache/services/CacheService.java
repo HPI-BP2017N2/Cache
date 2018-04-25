@@ -40,6 +40,7 @@ public class CacheService {
         logger.debug("Started fetching shop {}", shopId);
         getRepository().createCollection(shopId);
         getIdealoBridge().getOffers(shopId);
+        System.gc();
         logger.debug("Fetched shop {}.", shopId);
     }
 
