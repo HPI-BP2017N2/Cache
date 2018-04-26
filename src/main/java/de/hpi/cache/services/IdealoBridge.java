@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -30,12 +33,27 @@ public class IdealoBridge {
 
     private final ShopOfferRepository repository;
 
-    public void getOffers(long shopID) {
-        IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopID), IdealoOfferList.class);
+
+    @Retryable(
+            value = {HttpClientErrorException.class },
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 5000))
+    public void getOffers(long shopId) {
+        logger.debug("Start fetching shop {}", shopId);
+        IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopId), IdealoOfferList.class);
+        logger.debug("Fetched shop {}.", shopId);
+        logger.debug("Start writing offers of {}.", shopId);
+        int offersCount = 0;
 
         for (IdealoOffer offer : offers) {
-            getRepository().save(shopID, offer.toShopOffer());
+            getRepository().save(shopId, offer.toShopOffer());
+            offersCount ++;
         }
+
+        logger.debug("Wrote {} offers of {}.", offersCount, shopId);
+
+        offers = null;
+        System.gc();
     }
 
     private URI getOffersURI(long shopID) {

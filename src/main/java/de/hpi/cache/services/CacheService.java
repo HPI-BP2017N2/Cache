@@ -37,11 +37,10 @@ public class CacheService {
 
     public void warmup(long shopId){
         deleteAll(shopId);
-        logger.debug("Started fetching shop {}", shopId);
         getRepository().createCollection(shopId);
-        getIdealoBridge().getOffers(shopId);
-        System.gc();
-        logger.debug("Fetched shop {}.", shopId);
+        Thread warmup = new Thread(() -> getIdealoBridge().getOffers(shopId));
+        warmup.start();
+
     }
 
 
