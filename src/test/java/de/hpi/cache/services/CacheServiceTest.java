@@ -66,13 +66,11 @@ public class CacheServiceTest {
     public void warmup(){
         doNothing().when(getRepository()).deleteAll(getEXAMPLE_SHOP_ID());
         doNothing().when(getRepository()).createCollection(getEXAMPLE_SHOP_ID());
-        doNothing().when(getBridge()).getOffers(getEXAMPLE_SHOP_ID());
 
         getService().warmup(getEXAMPLE_SHOP_ID());
 
         verify(getRepository()).deleteAll(getEXAMPLE_SHOP_ID());
         verify(getRepository()).createCollection(getEXAMPLE_SHOP_ID());
-        verify(getBridge()).getOffers(getEXAMPLE_SHOP_ID());
     }
 
 }
