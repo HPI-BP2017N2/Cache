@@ -18,9 +18,14 @@ public class ShopOfferRepositoryImpl implements ShopOfferRepository {
 
     private final MongoTemplate mongoTemplate;
 
+    @Override
+    public ShopOffer getOffer(long shopId, String offerKey) {
+        return getMongoTemplate().findOne(query(where("offerKey").is(offerKey)), ShopOffer.class, Long.toString(shopId));
+    }
+
     // convenience
     @Override
-    public ShopOffer getOffer(long shopId, byte phase) {
+    public ShopOffer getOfferAndUpdatePhase(long shopId, byte phase) {
         ShopOffer idealoOffer = getMongoTemplate()
                 .findOne(query(where("phase").is(phase)), ShopOffer.class , Long.toString(shopId));
         if(idealoOffer != null) {
@@ -32,8 +37,10 @@ public class ShopOfferRepositoryImpl implements ShopOfferRepository {
     }
 
     @Override
-    public void deleteOffer(long shopId, String offerKey) {
-        getMongoTemplate().remove(query(where("offerKey").is(offerKey)), Long.toString(shopId));
+    public void markAsMatched(long shopId, String offerKey) {
+            getMongoTemplate()
+                    .updateFirst(query(where("_id")
+                            .is(offerKey)), update("isMatched", true), Long.toString(shopId));
     }
 
 
