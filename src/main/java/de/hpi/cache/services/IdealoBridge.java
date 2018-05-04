@@ -39,18 +39,16 @@ public class IdealoBridge {
             maxAttempts = 5,
             backoff = @Backoff(delay = 5000))
     public void getOffers(long shopId) {
-        logger.debug("Start fetching shop {}", shopId);
+        logger.info("Start fetching shop {}", shopId);
         IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopId), IdealoOfferList.class);
         logger.debug("Fetched shop {}.", shopId);
         logger.debug("Start writing offers of {}.", shopId);
-        int offersCount = 0;
 
         for (IdealoOffer offer : offers) {
             getRepository().save(shopId, offer.toShopOffer());
-            offersCount ++;
         }
 
-        logger.debug("Wrote {} offers of {}.", offersCount, shopId);
+        logger.info("Wrote {} offers of {}.", offers.size(), shopId);
 
         offers = null;
         System.gc();

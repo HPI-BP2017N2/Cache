@@ -15,7 +15,7 @@ import java.util.Map;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IdealoOffer {
-    @Indexed
+
     private Property<String> offerKey;
     private Property<Long> shopId;
     private Property<String> brandName;
@@ -32,6 +32,8 @@ public class IdealoOffer {
     private Property<List<String>> eans;
     private Property<Map<String, String>> smallPicture;
     private Property<Map<String, List<String>>> imageUrls;
+    private Property<String> productKey;
+    private Property<Long> mappedCatalogCategory;
 
 
     public ShopOffer toShopOffer() {
@@ -52,7 +54,8 @@ public class IdealoOffer {
         shopOffer.setEans(getPropertyValue(getEans()));
         shopOffer.setSmallPicture(getPropertyValue(getSmallPicture()));
         shopOffer.setImageUrls(getPropertyValue(getImageUrls()));
-
+        shopOffer.setProductKey(getPropertyValue(getProductKey()));
+        shopOffer.setMappedCatalogCategory(getPropertyValue(getMappedCatalogCategory()));
         return shopOffer;
     }
 

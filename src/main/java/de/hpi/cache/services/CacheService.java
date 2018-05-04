@@ -23,12 +23,17 @@ public class CacheService {
     private static final Logger logger = LogManager.getLogger(CacheService.class);
 
 
-    public ShopOffer getOffer(long shopId, byte phase) {
-        return getRepository().getOffer(shopId, phase);
+    public ShopOffer getOffer(long shopId, String offerKey) {
+        return getRepository().getOffer(shopId, offerKey);
     }
 
-    public void deleteOffer(long shopId, String offerKey) {
-        getRepository().deleteOffer(shopId, offerKey);
+    public ShopOffer getOfferAndUpdatePhase(long shopId, byte phase) {
+        return getRepository().getOfferAndUpdatePhase(shopId, phase);
+
+    }
+
+    public void markAsMatched(long shopId, String offerKey) {
+        getRepository().markAsMatched(shopId, offerKey);
     }
 
     public void deleteAll(long shopId) {
@@ -42,6 +47,5 @@ public class CacheService {
         warmup.start();
 
     }
-
 
 }

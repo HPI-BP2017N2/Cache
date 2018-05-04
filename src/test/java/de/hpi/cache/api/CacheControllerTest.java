@@ -12,13 +12,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -38,30 +37,41 @@ public class CacheControllerTest {
     private CacheService cacheService;
 
     @Test
-    public void getExistingOffer() throws Exception {
-        doReturn(getEXAMPlE_SHOP_OFFER()).when(getCacheService()).getOffer(getEXAMPLE_SHOP_ID(), getPHASE());
+    public void getExistingOfferByKey() throws Exception {
+        doReturn(getEXAMPlE_SHOP_OFFER()).when(getCacheService()).getOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
         getMockMvc()
-                .perform(get("/getOffer/" + getEXAMPLE_SHOP_ID()).param("phase", Long.toString(getPHASE())))
+                .perform(get("/getOffer/" + getEXAMPLE_SHOP_ID()).param("offerKey", getEXAMPLE_OFFER_KEY()))
                 .andExpect(status().isOk());
 
-        verify(getCacheService()).getOffer(getEXAMPLE_SHOP_ID(), getPHASE());
+        verify(getCacheService()).getOffer(eq(getEXAMPLE_SHOP_ID()), eq(getEXAMPLE_OFFER_KEY()));
+    }
+
+    @Test
+    public void getExistingOfferByPhase() throws Exception {
+        doReturn(getEXAMPlE_SHOP_OFFER()).when(getCacheService()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+
+        getMockMvc()
+                .perform(get("/getOfferAndUpdatePhase/" + getEXAMPLE_SHOP_ID()).param("phase", Byte.toString(getPHASE())))
+                .andExpect(status().isOk());
+
+        verify(getCacheService()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
     }
 
     @Test
     public void deleteOffer() throws Exception {
-        doNothing().when(getCacheService()).deleteOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+        doNothing().when(getCacheService()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
         getMockMvc()
-                .perform(delete("/deleteOffer/" + getEXAMPLE_SHOP_ID()).param("offerKey", getEXAMPLE_OFFER_KEY()))
+                .perform(delete("/markAsMatched/" + getEXAMPLE_SHOP_ID()).param("offerKey", getEXAMPLE_OFFER_KEY()))
                 .andExpect(status().isOk());
 
-        verify(getCacheService()).deleteOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+        verify(getCacheService()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
     }
 
     @Test
     public void deleteAll() throws Exception {
-        doNothing().when(getCacheService()).deleteOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+        doNothing().when(getCacheService()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
         getMockMvc()
                 .perform(delete("/deleteAll/" + getEXAMPLE_SHOP_ID()))
@@ -72,7 +82,7 @@ public class CacheControllerTest {
 
     @Test
     public void warmup() throws Exception {
-        doNothing().when(getCacheService()).deleteOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+        doNothing().when(getCacheService()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
         getMockMvc()
                 .perform(get("/warmup/" + getEXAMPLE_SHOP_ID()))

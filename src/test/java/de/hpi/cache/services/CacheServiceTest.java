@@ -35,22 +35,33 @@ public class CacheServiceTest {
     }
 
     @Test
-    public void getOffer(){
-        doReturn(getEXAMPlE_SHOP_OFFER()).when(getRepository()).getOffer(getEXAMPLE_SHOP_ID(), getPHASE());
+    public void getOfferByOfferKey(){
+        doReturn(getEXAMPlE_SHOP_OFFER()).when(getRepository()).getOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
-        ShopOffer offer = getService().getOffer(getEXAMPLE_SHOP_ID(), getPHASE());
+        ShopOffer offer = getService().getOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
-        verify(getRepository()).getOffer(getEXAMPLE_SHOP_ID(), getPHASE());
+        verify(getRepository()).getOffer(eq(getEXAMPLE_SHOP_ID()), eq(getEXAMPLE_OFFER_KEY()));
+        assertEquals(getEXAMPlE_SHOP_OFFER(), offer);
+
+    }
+
+    @Test
+    public void getOfferByPhase(){
+        doReturn(getEXAMPlE_SHOP_OFFER()).when(getRepository()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+
+        ShopOffer offer = getService().getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+
+        verify(getRepository()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
         assertEquals(getEXAMPlE_SHOP_OFFER(), offer);
     }
 
     @Test
-    public void deleteOffer(){
-        doNothing().when(getRepository()).deleteOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+    public void markOfferAsMatched(){
+        doNothing().when(getRepository()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
-        getService().deleteOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+        getService().markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
-        verify(getRepository()).deleteOffer(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+        verify(getRepository()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
     }
 
     @Test
