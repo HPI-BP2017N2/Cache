@@ -26,7 +26,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class IdealoBridgeTest {
 
     @Getter(AccessLevel.PRIVATE) private static final long EXAMPLE_SHOP_ID = 1234;
-    @Getter(AccessLevel.PRIVATE) private static final long EXAMPLE_CATEGORY = 12345;
+    @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_CATEGORY = "12345";
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_API_URL = "http://api.example.com/";
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_OFFER_ROUTE = "offers/";
 
@@ -44,7 +44,7 @@ public class IdealoBridgeTest {
         IdealoOffer idealoOffer = new IdealoOffer();
 
         Property<Long> shopId = new Property<>();
-        Property<Long> category = new Property<>();
+        Property<String> category = new Property<>();
         shopId.setValue(getEXAMPLE_SHOP_ID());
         category.setValue(getEXAMPLE_CATEGORY());
 

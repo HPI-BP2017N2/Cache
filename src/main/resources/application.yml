@@ -14,5 +14,5 @@ spring:
         host: ${MONGO_IP}
         port: ${MONGO_PORT}
         username: ${MONGO_CACHE_USER}
-        password: ${MONGO_PASSWORD}
+        password: ${MONGO_CACHE_PW}
         database: cache

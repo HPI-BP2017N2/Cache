@@ -33,7 +33,7 @@ public class IdealoOffer {
     private Property<Map<String, String>> smallPicture;
     private Property<Map<String, List<String>>> imageUrls;
     private Property<String> productKey;
-    private Property<Long> mappedCatalogCategory;
+    private Property<String> mappedCatalogCategory;
 
 
     public ShopOffer toShopOffer() {

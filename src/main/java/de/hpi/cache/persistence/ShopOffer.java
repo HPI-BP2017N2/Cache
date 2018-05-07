@@ -33,6 +33,6 @@ public class ShopOffer {
     private Map<String, String> smallPicture;
     private Map<String, List<String>> imageUrls;
     private String productKey;
-    private long mappedCatalogCategory;
+    private String mappedCatalogCategory;
 
 }
