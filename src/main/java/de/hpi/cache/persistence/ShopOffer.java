@@ -1,5 +1,6 @@
 package de.hpi.cache.persistence;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -10,10 +11,12 @@ import java.util.Map;
 
 @Setter
 @Getter
+@EqualsAndHashCode
 public class ShopOffer {
 
     @Id private String offerKey;
-    @Indexed byte phase = 0;
+    @Indexed private byte phase = 0;
+    private boolean isMatched = false;
     private Long shopId;
     private String brandName;
     private List<String> categoryPaths;
@@ -29,5 +32,8 @@ public class ShopOffer {
     private List<String> eans;
     private Map<String, String> smallPicture;
     private Map<String, List<String>> imageUrls;
+    private String productKey;
+    private String mappedCatalogCategory;
+    private String imageId;
 
 }
