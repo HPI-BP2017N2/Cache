@@ -7,6 +7,11 @@ idealobridge:
   accessTokenURI: ${ACCESS_TOKEN_URI}
   apiUrl: ${API_URL}
   offerRoute: "offers/"
+  rootUrlRoute: "rootUrl/"
+
+urlcleaner:
+  url: ${URL_CLEANER_URL}
+  shopIdToUrlRoute: "/clean/"
 
 spring:
   data:

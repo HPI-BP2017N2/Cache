@@ -1,6 +1,5 @@
 package de.hpi.cache.properties;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -10,16 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableConfigurationProperties
-@ConfigurationProperties("idealobridge")
+@ConfigurationProperties("urlcleaner")
 @Getter
 @Setter
 @Primary
-public class IdealoBridgeProperties {
+public class UrlCleanerProperties {
 
-    private String oAuth2ClientId;
-    private String oAuth2ClientSecret;
-    private String accessTokenURI;
-    private String apiUrl;
-    private String offerRoute;
-    private String rootUrlRoute;
+    private String url;
+    private String shopIdToUrlRoute;
+
 }
