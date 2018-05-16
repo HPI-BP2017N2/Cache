@@ -21,4 +21,5 @@ public class IdealoBridgeProperties {
     private String accessTokenURI;
     private String apiUrl;
     private String offerRoute;
+    private String rootUrlRoute;
 }

@@ -3,6 +3,7 @@ package de.hpi.cache.services;
 import de.hpi.cache.dto.IdealoOffer;
 import de.hpi.cache.dto.IdealoOfferList;
 import de.hpi.cache.dto.Property;
+import de.hpi.cache.dto.ShopIDToRootUrlResponse;
 import de.hpi.cache.persistence.ShopOffer;
 import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import de.hpi.cache.persistence.repositories.UrlCleaner;
@@ -22,7 +23,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.xml.ws.http.HTTPException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,12 +54,14 @@ public class IdealoBridge {
         logger.debug("Fetched shop {}.", shopId);
         logger.debug("Start writing offers of {}.", shopId);
 
+        String rootUrl = getRootUrl(shopId);
+
         List<Integer> imageUrlsIdPosition = PictureIdFinder.findPictureId(offers.subList(0, Math.min(100, offers.size())));
         for (IdealoOffer offer : offers) {
             ShopOffer shopOffer = offer.toShopOffer();
             Map<String, String> urls = new HashMap<>();
             String key = offer.getUrls().getValue().keySet().iterator().next();
-            urls.put(key, getCleanedUrl(offer.getShopId().getValue(), offer.getUrls().getValue().get(key)));
+            urls.put(key, getCleanedUrl(offer.getShopId().getValue(), offer.getUrls().getValue().get(key), rootUrl));
 
             shopOffer.setUrls(urls);
 
@@ -82,6 +84,15 @@ public class IdealoBridge {
         System.gc();
     }
 
+    @Retryable(
+            value = {HttpClientErrorException.class },
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 5000))
+
+    private String getRootUrl(long shopId) {
+        return getOAuthRestTemplate().getForObject(getRootUrlURI(shopId), ShopIDToRootUrlResponse.class).getShopUrl();
+    }
+
     private URI getOffersURI(long shopID) {
         return UriComponentsBuilder.fromUriString(getProperties().getApiUrl())
                 .path(getProperties().getOfferRoute() + shopID)
@@ -90,9 +101,17 @@ public class IdealoBridge {
                 .toUri();
     }
 
-    private String getCleanedUrl(long shopId, String dirtyUrl) {
+    private URI getRootUrlURI(long shopId) {
+        return UriComponentsBuilder.fromUriString(getProperties().getApiUrl())
+                .path(getProperties().getRootUrlRoute() + shopId)
+                .build()
+                .encode()
+                .toUri();
+    }
+
+    private String getCleanedUrl(long shopId, String dirtyUrl, String rootUrl) {
         try {
-            return  getUrlCleaner().cleanUrl(dirtyUrl, shopId);
+            return  getUrlCleaner().cleanUrl(dirtyUrl, shopId, rootUrl);
         } catch (HTTPException e){
             return null;
         }

@@ -3,6 +3,7 @@ package de.hpi.cache.services;
 import de.hpi.cache.dto.IdealoOffer;
 import de.hpi.cache.dto.IdealoOfferList;
 import de.hpi.cache.dto.Property;
+import de.hpi.cache.dto.ShopIDToRootUrlResponse;
 import de.hpi.cache.persistence.ShopOffer;
 import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import de.hpi.cache.persistence.repositories.UrlCleaner;
@@ -36,6 +37,7 @@ public class IdealoBridgeTest {
 
     private final IdealoOfferList idealoOffers = new IdealoOfferList();
     private final ShopOffer expectedShopOffer = new ShopOffer();
+    private final ShopIDToRootUrlResponse exampleResponse = new ShopIDToRootUrlResponse();
     private IdealoBridge bridge;
 
     @Mock private RestTemplate restTemplate;
@@ -76,6 +78,8 @@ public class IdealoBridgeTest {
                 getRepository()
         ));
 
+        getExampleResponse().setShopUrl(getEXAMPLE_URL());
+
     }
 
     @Test
@@ -83,7 +87,8 @@ public class IdealoBridgeTest {
         doReturn(getIdealoOffers()).when(getRestTemplate()).getForObject(any(URI.class), eq(IdealoOfferList.class));
         doReturn(getEXAMPLE_API_URL()).when(getProperties()).getApiUrl();
         doReturn(getEXAMPLE_OFFER_ROUTE()).when(getProperties()).getOfferRoute();
-        doReturn(getEXAMPLE_URL()).when(getUrlCleaner().cleanUrl(getEXAMPLE_URL(), getEXAMPLE_SHOP_ID()));
+        doReturn(getExampleResponse()).when(getRestTemplate()).getForObject(any(URI.class), eq(ShopIDToRootUrlResponse.class));
+        doReturn(getEXAMPLE_URL()).when(getUrlCleaner()).cleanUrl(getEXAMPLE_URL(), getEXAMPLE_SHOP_ID(), getEXAMPLE_URL());
 
         getBridge().getOffers(getEXAMPLE_SHOP_ID());
 

@@ -25,16 +25,17 @@ public class UrlCleaner {
     @Retryable(
             value = { HttpClientErrorException.class },
             backoff = @Backoff(delay = 3000, multiplier = 5))
-    public String cleanUrl(String dirtyUrl, long shopID) {
-        return getRestTemplate().getForObject(getCleanURI(shopID, dirtyUrl), SuccessCleanResponse.class).getData()
+    public String cleanUrl(String dirtyUrl, long shopID, String rootUrl) {
+        return getRestTemplate().getForObject(getCleanURI(shopID, dirtyUrl, rootUrl), SuccessCleanResponse.class).getData()
                 .getUrl();
     }
 
 
-    private URI getCleanURI(long shopID, String dirtyUrl) {
+    private URI getCleanURI(long shopID, String dirtyUrl, String rootUrl) {
         return UriComponentsBuilder.fromUriString(getProperties().getUrl())
                 .path(getProperties().getShopIdToUrlRoute() + shopID)
                 .queryParam("url", dirtyUrl)
+                .queryParam("shopRootUrl", rootUrl)
                 .build()
                 .encode()
                 .toUri();
