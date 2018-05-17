@@ -40,4 +40,14 @@ public class PictureIdFinder {
         url = url.replace("//", "/");
         return url.split("/");
     }
+
+    public static String getImageId(String url, List<Integer> indices) {
+        String[] urlParts = PictureIdFinder.splitUrl(url);
+        String uniqueParts = "";
+        for (int position : indices) {
+            uniqueParts = uniqueParts.concat(urlParts[position]);
+        }
+
+        return uniqueParts.equals("")? null : uniqueParts;
+    }
 }

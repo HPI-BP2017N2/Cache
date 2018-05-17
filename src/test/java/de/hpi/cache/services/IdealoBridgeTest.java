@@ -1,12 +1,10 @@
 package de.hpi.cache.services;
 
-import de.hpi.cache.dto.IdealoOffer;
-import de.hpi.cache.dto.IdealoOfferList;
-import de.hpi.cache.dto.Property;
-import de.hpi.cache.dto.ShopIDToRootUrlResponse;
+import de.hpi.cache.dto.*;
 import de.hpi.cache.persistence.ShopOffer;
 import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import de.hpi.cache.persistence.repositories.UrlCleaner;
+import de.hpi.cache.properties.CacheProperties;
 import de.hpi.cache.properties.IdealoBridgeProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,6 +27,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @Setter(AccessLevel.PRIVATE)
 public class IdealoBridgeTest {
 
+
     @Getter(AccessLevel.PRIVATE) private static final long EXAMPLE_SHOP_ID = 1234;
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_CATEGORY = "12345";
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_API_URL = "http://api.example.com/";
@@ -36,12 +35,13 @@ public class IdealoBridgeTest {
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_URL = "http://example.com/1234";
 
     private final IdealoOfferList idealoOffers = new IdealoOfferList();
-    private final ShopOffer expectedShopOffer = new ShopOffer();
     private final ShopIDToRootUrlResponse exampleResponse = new ShopIDToRootUrlResponse();
+    private final IdealoCategory exampleCategory = new IdealoCategory();
     private IdealoBridge bridge;
 
     @Mock private RestTemplate restTemplate;
-    @Mock private IdealoBridgeProperties properties;
+    @Mock private IdealoBridgeProperties bridgeProperties;
+    @Mock private CacheProperties cacheProperties;
     @Mock private ShopOfferRepository repository;
     @Mock private UrlCleaner urlCleaner;
 
@@ -64,35 +64,34 @@ public class IdealoBridgeTest {
         idealoOffer.setShopId(shopId);
         idealoOffer.setMappedCatalogCategory(category);
         idealoOffer.setUrls(urlProperty);
-
-        getExpectedShopOffer().setShopId(getEXAMPLE_SHOP_ID());
-        getExpectedShopOffer().setMappedCatalogCategory(getEXAMPLE_CATEGORY());
-        getExpectedShopOffer().setUrls(urls);
-
         getIdealoOffers().add(idealoOffer);
 
         setBridge(new IdealoBridge(
                 getRestTemplate(),
-                getProperties(),
+                getBridgeProperties(),
+                getCacheProperties(),
                 getUrlCleaner(),
                 getRepository()
         ));
 
         getExampleResponse().setShopUrl(getEXAMPLE_URL());
+        getExampleCategory().setCategoryId(getEXAMPLE_CATEGORY());
+        getExampleCategory().setParentCategoryId("100");
 
     }
 
     @Test
     public void getOffers() {
         doReturn(getIdealoOffers()).when(getRestTemplate()).getForObject(any(URI.class), eq(IdealoOfferList.class));
-        doReturn(getEXAMPLE_API_URL()).when(getProperties()).getApiUrl();
-        doReturn(getEXAMPLE_OFFER_ROUTE()).when(getProperties()).getOfferRoute();
+        doReturn(getEXAMPLE_API_URL()).when(getBridgeProperties()).getApiUrl();
+        doReturn(getEXAMPLE_OFFER_ROUTE()).when(getBridgeProperties()).getOfferRoute();
         doReturn(getExampleResponse()).when(getRestTemplate()).getForObject(any(URI.class), eq(ShopIDToRootUrlResponse.class));
         doReturn(getEXAMPLE_URL()).when(getUrlCleaner()).cleanUrl(getEXAMPLE_URL(), getEXAMPLE_SHOP_ID(), getEXAMPLE_URL());
+        doReturn(getExampleCategory()).when(getRestTemplate()).getForObject(any(URI.class), eq(IdealoCategory.class));
 
         getBridge().getOffers(getEXAMPLE_SHOP_ID());
 
-        verify(getRepository(), times(getIdealoOffers().size())).save(getEXAMPLE_SHOP_ID(), getExpectedShopOffer());
+        verify(getRepository(), times(getIdealoOffers().size())).save(eq(getEXAMPLE_SHOP_ID()), any(ShopOffer.class));
 
     }
 }

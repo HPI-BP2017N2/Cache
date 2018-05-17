@@ -1,6 +1,5 @@
 package de.hpi.cache.properties;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -10,18 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableConfigurationProperties
-@ConfigurationProperties("idealobridge")
+@ConfigurationProperties("cache")
 @Getter
 @Setter
 @Primary
-public class IdealoBridgeProperties {
+public class CacheProperties {
 
-    private String oAuth2ClientId;
-    private String oAuth2ClientSecret;
-    private String accessTokenURI;
-    private String apiUrl;
-    private String offerRoute;
-    private String rootUrlRoute;
-    private String categoryRoute;
-
+    private int categoryMappingLevel;
 }

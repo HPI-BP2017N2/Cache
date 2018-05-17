@@ -34,6 +34,9 @@ public class ShopOffer {
     private Map<String, List<String>> imageUrls;
     private String productKey;
     private String mappedCatalogCategory;
+    private String categoryName;
+    private String higherLevelCategory;
+    private String higherLevelCategoryName;
     private String imageId;
 
 }

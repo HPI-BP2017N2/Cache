@@ -1,6 +1,9 @@
 server:
   port: ${CACHE_PORT}
 
+cache:
+  categoryMappingLevel: 2
+
 idealobridge:
   oAuth2ClientId: ${CLIENT_ID}
   oAuth2ClientSecret: ${CLIENT_SECRET}
@@ -8,6 +11,7 @@ idealobridge:
   apiUrl: ${API_URL}
   offerRoute: "offers/"
   rootUrlRoute: "rootUrl/"
+  categoryRoute: "category/"
 
 urlcleaner:
   url: ${URL_CLEANER_URL}
