@@ -70,6 +70,5 @@ public class PictureIdFinderTest {
         for(int i = 0; i < getEXPECTED_URL_PARTS().length; i++) {
             assertEquals(getEXPECTED_URL_PARTS()[i], result[i]);
         }
-
     }
 }
