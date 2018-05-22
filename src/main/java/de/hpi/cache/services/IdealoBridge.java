@@ -43,6 +43,8 @@ public class IdealoBridge {
 
     private final ShopOfferRepository repository;
 
+    private final Map<String, Pair<IdealoCategory, IdealoCategory>> higherLevelCategories = new HashMap<>();
+
 
     @Retryable(
             value = {HttpClientErrorException.class },
@@ -63,7 +65,7 @@ public class IdealoBridge {
             shopOffer.setUrls(getCleanedUrls(shopId, rootUrl, offer.getUrls().getValue()));
 
             if(offer.getMappedCatalogCategory() != null) {
-                Pair<IdealoCategory, IdealoCategory> categories = getActualAndHigherLevelCategory(offer.getMappedCatalogCategory().getValue(), wantedCategoryLevel);
+                Pair<IdealoCategory, IdealoCategory> categories = getCachedCategoryInformation(offer.getMappedCatalogCategory().getValue(), wantedCategoryLevel);
                 shopOffer.setCategoryName(categories.getKey().getCategoryName());
                 shopOffer.setHigherLevelCategory(categories.getValue().getCategoryId());
                 shopOffer.setHigherLevelCategoryName(categories.getValue().getCategoryName());
@@ -79,6 +81,18 @@ public class IdealoBridge {
         logger.info("Wrote {} offers of {}.", offers.size(), shopId);
         offers = null;
         System.gc();
+    }
+
+    private Pair<IdealoCategory, IdealoCategory> getCachedCategoryInformation(String categoryId, int wantedCategoryLevel) {
+        if(getHigherLevelCategories().containsKey(categoryId)) {
+            return getHigherLevelCategories().get(categoryId);
+        }
+
+        Pair<IdealoCategory, IdealoCategory> categories = getActualAndHigherLevelCategory(categoryId, wantedCategoryLevel);
+        getHigherLevelCategories().put(categoryId, categories);
+
+        return categories;
+
     }
 
     private Pair<IdealoCategory, IdealoCategory> getActualAndHigherLevelCategory(String categoryId, int wantedCategoryLevel) {
@@ -109,7 +123,7 @@ public class IdealoBridge {
     private Map<String, String> getCleanedUrls(long shopId, String rootUrl, Map<String, String> urls) {
         Map<String, String> cleanedUrls = new HashMap<>();
         String key = urls.keySet().iterator().next();
-        urls.put(key, getCleanedUrl(shopId, urls.get(key), rootUrl));
+        cleanedUrls.put(key, getCleanedUrl(shopId, urls.get(key), rootUrl));
         return cleanedUrls;
     }
 
