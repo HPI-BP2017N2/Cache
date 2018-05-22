@@ -3,6 +3,7 @@ package de.hpi.cache.persistence;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @Setter
 @Getter
+@ToString
 @EqualsAndHashCode
 public class ShopOffer {
 

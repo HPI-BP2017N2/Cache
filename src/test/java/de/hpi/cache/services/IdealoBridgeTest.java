@@ -29,7 +29,7 @@ public class IdealoBridgeTest {
 
 
     @Getter(AccessLevel.PRIVATE) private static final long EXAMPLE_SHOP_ID = 1234;
-    @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_CATEGORY = "12345";
+    @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_CATEGORY_ID = "12345";
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_API_URL = "http://api.example.com/";
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_OFFER_ROUTE = "offers/";
     @Getter(AccessLevel.PRIVATE) private static final String EXAMPLE_URL = "http://example.com/1234";
@@ -37,6 +37,7 @@ public class IdealoBridgeTest {
     private final IdealoOfferList idealoOffers = new IdealoOfferList();
     private final ShopIDToRootUrlResponse exampleResponse = new ShopIDToRootUrlResponse();
     private final IdealoCategory exampleCategory = new IdealoCategory();
+    private final ShopOffer expectedOffer = new ShopOffer();
     private IdealoBridge bridge;
 
     @Mock private RestTemplate restTemplate;
@@ -57,7 +58,7 @@ public class IdealoBridgeTest {
         Property<String> category = new Property<>();
         Property<Map<String, String>> urlProperty = new Property<>();
         shopId.setValue(getEXAMPLE_SHOP_ID());
-        category.setValue(getEXAMPLE_CATEGORY());
+        category.setValue(getEXAMPLE_CATEGORY_ID());
         urlProperty.setValue(urls);
 
 
@@ -75,8 +76,12 @@ public class IdealoBridgeTest {
         ));
 
         getExampleResponse().setShopUrl(getEXAMPLE_URL());
-        getExampleCategory().setCategoryId(getEXAMPLE_CATEGORY());
+        getExampleCategory().setCategoryId(getEXAMPLE_CATEGORY_ID());
         getExampleCategory().setParentCategoryId("100");
+        getExpectedOffer().setUrls(urls);
+        getExpectedOffer().setMappedCatalogCategory(getEXAMPLE_CATEGORY_ID());
+        getExpectedOffer().setShopId(getEXAMPLE_SHOP_ID());
+        getExpectedOffer().setHigherLevelCategory(getEXAMPLE_CATEGORY_ID());
 
     }
 
@@ -91,7 +96,7 @@ public class IdealoBridgeTest {
 
         getBridge().getOffers(getEXAMPLE_SHOP_ID());
 
-        verify(getRepository(), times(getIdealoOffers().size())).save(eq(getEXAMPLE_SHOP_ID()), any(ShopOffer.class));
+        verify(getRepository(), times(getIdealoOffers().size())).save(getEXAMPLE_SHOP_ID(), getExpectedOffer());
 
     }
 }
