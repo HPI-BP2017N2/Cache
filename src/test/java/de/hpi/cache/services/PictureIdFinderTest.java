@@ -17,8 +17,8 @@ public class PictureIdFinderTest {
     @Getter(AccessLevel.PRIVATE) private static String EXAMPLE_URL = "http://example.com/123";
     @Getter(AccessLevel.PRIVATE) private static String EXAMPLE_IMAGE_URL1 = "http://example.com/124";
     @Getter(AccessLevel.PRIVATE) private static String EXAMPLE_IMAGE_URL2 = "http://example.com/125";
-    @Getter(AccessLevel.PRIVATE) private static String[] EXPECTED_URL_PARTS = {"http:", "example.com", "123"};
-    @Getter(AccessLevel.PRIVATE) private static int[] EXPECTED_IMAGE_IDS = {2};
+    @Getter(AccessLevel.PRIVATE) private static String[] EXPECTED_URL_PARTS = {"http:", "example", "com", "123"};
+    @Getter(AccessLevel.PRIVATE) private static int[] EXPECTED_IMAGE_IDS = {3};
 
     private final List<IdealoOffer> offers = new LinkedList<>();
 

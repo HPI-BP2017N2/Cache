@@ -43,9 +43,7 @@ public class CacheService {
     public void warmup(long shopId){
         deleteAll(shopId);
         getRepository().createCollection(shopId);
-        Thread warmup = new Thread(() -> getIdealoBridge().getOffers(shopId));
-        warmup.start();
-
+        getIdealoBridge().getOffers(shopId);
     }
 
 }
