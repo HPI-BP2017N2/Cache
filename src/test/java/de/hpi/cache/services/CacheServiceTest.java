@@ -1,7 +1,7 @@
 package de.hpi.cache.services;
 
 import de.hpi.cache.persistence.ShopOffer;
-import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
+import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class CacheServiceTest {
     @Getter(AccessLevel.PRIVATE) private static final ShopOffer EXAMPlE_SHOP_OFFER = new ShopOffer();
 
     @Mock private IdealoBridge bridge;
-    @Mock private ShopOfferRepositoryImpl repository;
+    @Mock private ShopOfferRepository repository;
 
     private CacheService service;
 
@@ -62,6 +62,25 @@ public class CacheServiceTest {
         getService().markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
 
         verify(getRepository()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+    }
+
+    @Test
+    public void getUnmatchedOfferAndUpdatePhase() {
+        doReturn(getEXAMPlE_SHOP_OFFER()).when(getRepository()).getUnmatchedOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+
+        ShopOffer offer = getService().getUnmatchedOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+
+        verify(getRepository()).getUnmatchedOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+        assertEquals(getEXAMPlE_SHOP_OFFER(), offer);
+    }
+
+    @Test
+    public void updatePhase(){
+        doNothing().when(getRepository()).updatePhase(getEXAMPLE_SHOP_ID(), getPHASE(), getPHASE());
+
+        getService().updatePhase(getEXAMPLE_SHOP_ID(), getPHASE(), getPHASE());
+
+        verify(getRepository()).updatePhase(getEXAMPLE_SHOP_ID(), getPHASE(), getPHASE());
     }
 
     @Test

@@ -1,7 +1,7 @@
 package de.hpi.cache.services;
 
 import de.hpi.cache.persistence.ShopOffer;
-import de.hpi.cache.persistence.repositories.ShopOfferRepositoryImpl;
+import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +18,17 @@ public class CacheService {
 
     private final IdealoBridge idealoBridge;
 
-    private final ShopOfferRepositoryImpl repository;
+    private final ShopOfferRepository repository;
 
     private static final Logger logger = LogManager.getLogger(CacheService.class);
 
 
     public ShopOffer getOffer(long shopId, String offerKey) {
         return getRepository().getOffer(shopId, offerKey);
+    }
+
+    public ShopOffer getUnmatchedOfferAndUpdatePhase(long shopId, byte phase) {
+        return getRepository().getUnmatchedOfferAndUpdatePhase(shopId, phase);
     }
 
     public ShopOffer getOfferAndUpdatePhase(long shopId, byte phase) {
@@ -34,6 +38,10 @@ public class CacheService {
 
     public void markAsMatched(long shopId, String offerKey) {
         getRepository().markAsMatched(shopId, offerKey);
+    }
+
+    public void updatePhase(long shopId, byte oldPhase, byte newPhase) {
+        getRepository().updatePhase(shopId, oldPhase, newPhase);
     }
 
     public void deleteAll(long shopId) {

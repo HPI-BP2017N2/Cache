@@ -18,7 +18,7 @@ public class ShopOffer {
 
     @Id private String offerKey;
     @Indexed private byte phase = 0;
-    private boolean isMatched = false;
+    @Indexed private boolean isMatched = false;
     private Long shopId;
     private String brandName;
     private List<String> categoryPaths;

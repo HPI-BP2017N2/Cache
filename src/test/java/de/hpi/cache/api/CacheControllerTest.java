@@ -18,6 +18,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -82,12 +83,35 @@ public class CacheControllerTest {
 
     @Test
     public void warmup() throws Exception {
-        doNothing().when(getCacheService()).markAsMatched(getEXAMPLE_SHOP_ID(), getEXAMPLE_OFFER_KEY());
+        doNothing().when(getCacheService()).warmup(getEXAMPLE_SHOP_ID());
 
         getMockMvc()
                 .perform(get("/warmup/" + getEXAMPLE_SHOP_ID()))
                 .andExpect(status().isOk());
 
         verify(getCacheService()).warmup(getEXAMPLE_SHOP_ID());
+    }
+
+    @Test
+    public void getUnmatchedOfferAndUpdatePhase() throws Exception {
+        doReturn(getEXAMPlE_SHOP_OFFER()).when(getCacheService()).getUnmatchedOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+
+        getMockMvc()
+                .perform(get("/getUnmatchedOfferAndUpdatePhase/" + getEXAMPLE_SHOP_ID()).param("phase", Byte.toString(getPHASE())))
+                .andExpect(status().isOk());
+
+        verify(getCacheService()).getUnmatchedOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+    }
+
+    @Test
+    public void updatePhase() throws Exception {
+        doNothing().when(getCacheService()).updatePhase(getEXAMPLE_SHOP_ID(), getPHASE(), getPHASE());
+
+        getMockMvc()
+                .perform(post("/updatePhase/" + getEXAMPLE_SHOP_ID()).param("oldPhase", Byte.toString(getPHASE())).param("newPhase", Byte.toString(getPHASE())))
+                .andExpect(status().isOk());
+
+        verify(getCacheService()).updatePhase(getEXAMPLE_SHOP_ID(), getPHASE(), getPHASE());
+
     }
 }

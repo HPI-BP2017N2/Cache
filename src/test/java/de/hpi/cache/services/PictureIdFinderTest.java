@@ -61,14 +61,4 @@ public class PictureIdFinderTest {
         }
     }
 
-    @Test
-    public void splitUrl() {
-        String[] result = PictureIdFinder.splitUrl(getEXAMPLE_URL());
-
-        assertEquals(getEXPECTED_URL_PARTS().length, result.length);
-
-        for(int i = 0; i < getEXPECTED_URL_PARTS().length; i++) {
-            assertEquals(getEXPECTED_URL_PARTS()[i], result[i]);
-        }
-    }
 }

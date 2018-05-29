@@ -36,7 +36,7 @@ public class PictureIdFinder {
         return uniqueIndex;
     }
 
-    public static String[] splitUrl(String url) {
+    private static String[] splitUrl(String url) {
         url = url.replace("//", "/");
         return url.split("[/.]");
     }
