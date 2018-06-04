@@ -34,12 +34,12 @@ To run the microservice it is required to set up the following:
 
 ## How it works
 1. The cache receives a request to download the offers of one shop. If already downloading, the following steps will be skipped.  
- 1.1. The cache downloads all offers of the shop from the idealo bridge.  
- 1.2. The cache finds the indices of unique parts in the image URLs.  
- 1.3. For every offer, the cache  
-  1.3.1 requests the cleaned URL from the URL cleaner,  
-  1.3.2 finds a parent category on the specified level and  
-  1.3.3 stores the offer.
+2. The cache downloads all offers of the shop from the idealo bridge.  
+3. The cache finds the indices of unique parts in the image URLs.  
+4. For every offer, the cache  
+ 4.1. requests the cleaned URL from the URL cleaner,  
+ 4.2. finds a parent category on the specified level and  
+ 4.3. stores the offer.
 
 ### Further requests
 - an offer of a shop in a specific phase
