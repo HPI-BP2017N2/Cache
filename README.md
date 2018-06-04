@@ -30,7 +30,7 @@ To run the microservice it is required to set up the following:
 - URLCLEANER_IP: The URI of the URL-Cleaner
 
 #### Component properties
-- categoryMappingLevel: Depth of the parent category of an offer stored by idealo that should be stored.
+- categoryMappingLevel: Depth of the parent category of an idealo offer that should be stored.
 
 ## How it works
 1. The cache receives a request to download the offers of one shop. If already downloading, the following steps will be skipped.  
