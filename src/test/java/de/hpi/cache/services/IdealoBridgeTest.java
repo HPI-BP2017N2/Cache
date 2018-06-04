@@ -2,6 +2,7 @@ package de.hpi.cache.services;
 
 import de.hpi.cache.dto.*;
 import de.hpi.cache.persistence.ShopOffer;
+import de.hpi.cache.persistence.WarmingUpShops;
 import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import de.hpi.cache.persistence.repositories.UrlCleaner;
 import de.hpi.cache.properties.CacheProperties;
@@ -45,6 +46,7 @@ public class IdealoBridgeTest {
     @Mock private CacheProperties cacheProperties;
     @Mock private ShopOfferRepository repository;
     @Mock private UrlCleaner urlCleaner;
+    @Mock private WarmingUpShops currentlyWarmingUp;
 
     @Before
     public void setup() {
@@ -93,10 +95,12 @@ public class IdealoBridgeTest {
         doReturn(getExampleResponse()).when(getRestTemplate()).getForObject(any(URI.class), eq(ShopIDToRootUrlResponse.class));
         doReturn(getEXAMPLE_URL()).when(getUrlCleaner()).cleanUrl(getEXAMPLE_URL(), getEXAMPLE_SHOP_ID(), getEXAMPLE_URL());
         doReturn(getExampleCategory()).when(getRestTemplate()).getForObject(any(URI.class), eq(IdealoCategory.class));
+        doReturn(false).when(getCurrentlyWarmingUp()).isWarmingUp(getEXAMPLE_SHOP_ID());
 
-        getBridge().getOffers(getEXAMPLE_SHOP_ID());
+        getBridge().getOffers(getEXAMPLE_SHOP_ID(), getCurrentlyWarmingUp());
 
         verify(getRepository(), times(getIdealoOffers().size())).save(getEXAMPLE_SHOP_ID(), getExpectedOffer());
-
+        verify(getCurrentlyWarmingUp()).addShop(getEXAMPLE_SHOP_ID());
+        verify(getCurrentlyWarmingUp()).removeShop(getEXAMPLE_SHOP_ID());
     }
 }

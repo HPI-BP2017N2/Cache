@@ -1,6 +1,7 @@
 package de.hpi.cache.api;
 
 import de.hpi.cache.persistence.ShopOffer;
+import de.hpi.cache.persistence.WarmingUpShops;
 import de.hpi.cache.services.CacheService;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -50,13 +52,13 @@ public class CacheControllerTest {
 
     @Test
     public void getExistingOfferByPhase() throws Exception {
-        doReturn(getEXAMPlE_SHOP_OFFER()).when(getCacheService()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+        doReturn(getEXAMPlE_SHOP_OFFER()).when(getCacheService()).getOfferAndUpdatePhase(eq(getEXAMPLE_SHOP_ID()), eq(getPHASE()), any(WarmingUpShops.class));
 
         getMockMvc()
                 .perform(get("/getOfferAndUpdatePhase/" + getEXAMPLE_SHOP_ID()).param("phase", Byte.toString(getPHASE())))
                 .andExpect(status().isOk());
 
-        verify(getCacheService()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+        verify(getCacheService()).getOfferAndUpdatePhase(eq(getEXAMPLE_SHOP_ID()), eq(getPHASE()), any(WarmingUpShops.class));
     }
 
     @Test
@@ -83,13 +85,13 @@ public class CacheControllerTest {
 
     @Test
     public void warmup() throws Exception {
-        doNothing().when(getCacheService()).warmup(getEXAMPLE_SHOP_ID());
+        doNothing().when(getCacheService()).warmup(eq(getEXAMPLE_SHOP_ID()), any(WarmingUpShops.class));
 
         getMockMvc()
                 .perform(get("/warmup/" + getEXAMPLE_SHOP_ID()))
                 .andExpect(status().isOk());
 
-        verify(getCacheService()).warmup(getEXAMPLE_SHOP_ID());
+        verify(getCacheService()).warmup(eq(getEXAMPLE_SHOP_ID()), any(WarmingUpShops.class));
     }
 
     @Test
