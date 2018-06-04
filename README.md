@@ -41,7 +41,7 @@ To run the microservice it is required to set up the following:
   1.3.2 finds a parent category on the specified level and  
   1.3.3 stores the offer.
 
-### What can be also requested
+### Further requests
 - an offer of a shop in a specific phase
 - an offer of a shop in a specific phase that has not already been matched
 - an offer of a shop with by offer key
