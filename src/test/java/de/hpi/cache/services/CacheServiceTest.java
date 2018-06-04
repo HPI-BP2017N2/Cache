@@ -1,6 +1,7 @@
 package de.hpi.cache.services;
 
 import de.hpi.cache.persistence.ShopOffer;
+import de.hpi.cache.persistence.WarmingUpShops;
 import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class CacheServiceTest {
 
     @Mock private IdealoBridge bridge;
     @Mock private ShopOfferRepository repository;
+    @Mock private WarmingUpShops currentlyWarmingUp;
 
     private CacheService service;
 
@@ -48,8 +50,10 @@ public class CacheServiceTest {
     @Test
     public void getOfferByPhase(){
         doReturn(getEXAMPlE_SHOP_OFFER()).when(getRepository()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+        doReturn(false).when(getCurrentlyWarmingUp()).isWarmingUp(getEXAMPLE_SHOP_ID());
 
-        ShopOffer offer = getService().getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
+
+        ShopOffer offer = getService().getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE(), getCurrentlyWarmingUp());
 
         verify(getRepository()).getOfferAndUpdatePhase(getEXAMPLE_SHOP_ID(), getPHASE());
         assertEquals(getEXAMPlE_SHOP_OFFER(), offer);
@@ -97,7 +101,7 @@ public class CacheServiceTest {
         doNothing().when(getRepository()).deleteAll(getEXAMPLE_SHOP_ID());
         doNothing().when(getRepository()).createCollection(getEXAMPLE_SHOP_ID());
 
-        getService().warmup(getEXAMPLE_SHOP_ID());
+        getService().warmup(getEXAMPLE_SHOP_ID(), getCurrentlyWarmingUp());
 
         verify(getRepository()).deleteAll(getEXAMPLE_SHOP_ID());
         verify(getRepository()).createCollection(getEXAMPLE_SHOP_ID());

@@ -31,7 +31,7 @@ import java.util.*;
 @Setter(AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Service
-public class IdealoBridge {
+class IdealoBridge {
 
     private final RestTemplate oAuthRestTemplate;
 
@@ -52,8 +52,7 @@ public class IdealoBridge {
             value = {HttpClientErrorException.class },
             maxAttempts = 5,
             backoff = @Backoff(delay = 5000))
-    @Async
-    public void getOffers(long shopId, WarmingUpShops currentlyWarmingUp) {
+    void getOffers(long shopId, WarmingUpShops currentlyWarmingUp) {
         currentlyWarmingUp.addShop(shopId);
         logger.info("Start fetching shop {}", shopId);
         IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopId), IdealoOfferList.class);

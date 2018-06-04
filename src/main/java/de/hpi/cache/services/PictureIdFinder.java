@@ -5,9 +5,9 @@ import de.hpi.cache.dto.Property;
 
 import java.util.*;
 
-public class PictureIdFinder {
+class PictureIdFinder {
 
-    public static List<Integer> findPictureId(List<IdealoOffer> idealoOffers) {
+    static List<Integer> findPictureId(List<IdealoOffer> idealoOffers) {
         Set<String> partSet = new HashSet<>();
         int length = 0;
         Set<Integer> nonUniqueIndice = new HashSet<>();
@@ -41,7 +41,7 @@ public class PictureIdFinder {
         return url.split("[/.]");
     }
 
-    public static String getImageId(String url, List<Integer> indices) {
+    static String getImageId(String url, List<Integer> indices) {
         String[] urlParts = PictureIdFinder.splitUrl(url);
         String uniqueParts = "";
         for (int position : indices) {

@@ -1,5 +1,6 @@
 package de.hpi.cache.persistence;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,9 +17,11 @@ import java.util.Map;
 @EqualsAndHashCode
 public class ShopOffer {
 
+    @ApiModelProperty(notes = "Unique offer identifier used by idealo", required = true)
     @Id private String offerKey;
     @Indexed private byte phase = 0;
     @Indexed private boolean isMatched = false;
+    @ApiModelProperty(notes = "Unique shop identifier used by idealo", required = true)
     private Long shopId;
     private String brandName;
     private List<String> categoryPaths;
