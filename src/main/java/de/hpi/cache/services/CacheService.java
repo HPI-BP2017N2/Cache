@@ -1,6 +1,7 @@
 package de.hpi.cache.services;
 
 import de.hpi.cache.persistence.ShopOffer;
+import de.hpi.cache.persistence.WarmingUpShops;
 import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,9 +32,15 @@ public class CacheService {
         return getRepository().getUnmatchedOfferAndUpdatePhase(shopId, phase);
     }
 
-    public ShopOffer getOfferAndUpdatePhase(long shopId, byte phase) {
+    public ShopOffer getOfferAndUpdatePhase(long shopId, byte phase, WarmingUpShops currentlyWarmingUp) {
+        while(currentlyWarmingUp.isWarmingUp(shopId)) {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return getRepository().getOfferAndUpdatePhase(shopId, phase);
-
     }
 
     public void markAsMatched(long shopId, String offerKey) {
@@ -48,10 +55,15 @@ public class CacheService {
         getRepository().deleteAll(shopId);
     }
 
-    public void warmup(long shopId){
+    public void warmup(long shopId, WarmingUpShops currentlyWarmingUp){
+        if(currentlyWarmingUp.isWarmingUp(shopId)) {
+            return;
+        }
         deleteAll(shopId);
         getRepository().createCollection(shopId);
-        getIdealoBridge().getOffers(shopId);
+
+        Thread warmUpThread = new Thread(() -> getIdealoBridge().getOffers(shopId, currentlyWarmingUp));
+        warmUpThread.start();
     }
 
 }

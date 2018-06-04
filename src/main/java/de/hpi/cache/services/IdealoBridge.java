@@ -2,6 +2,7 @@ package de.hpi.cache.services;
 
 import de.hpi.cache.dto.*;
 import de.hpi.cache.persistence.ShopOffer;
+import de.hpi.cache.persistence.WarmingUpShops;
 import de.hpi.cache.persistence.repositories.ShopOfferRepository;
 import de.hpi.cache.persistence.repositories.UrlCleaner;
 import de.hpi.cache.properties.CacheProperties;
@@ -52,7 +53,8 @@ public class IdealoBridge {
             maxAttempts = 5,
             backoff = @Backoff(delay = 5000))
     @Async
-    public void getOffers(long shopId) {
+    public void getOffers(long shopId, WarmingUpShops currentlyWarmingUp) {
+        currentlyWarmingUp.addShop(shopId);
         logger.info("Start fetching shop {}", shopId);
         IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopId), IdealoOfferList.class);
         logger.debug("Fetched shop {}.", shopId);
@@ -81,6 +83,7 @@ public class IdealoBridge {
             getRepository().save(shopId, shopOffer);
         }
         logger.info("Wrote {} offers of {}.", offers.size(), shopId);
+        currentlyWarmingUp.removeShop(shopId);
         offers = null;
         System.gc();
     }

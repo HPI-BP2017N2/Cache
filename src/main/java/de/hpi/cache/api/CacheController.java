@@ -1,6 +1,7 @@
 package de.hpi.cache.api;
 
 import de.hpi.cache.persistence.ShopOffer;
+import de.hpi.cache.persistence.WarmingUpShops;
 import de.hpi.cache.services.CacheService;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.*;
 @Getter(AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class CacheController {
+
     private final CacheService cacheService;
+    private final WarmingUpShops currentlyWarmingUp = new WarmingUpShops();
 
     @RequestMapping(value = "/getOfferAndUpdatePhase/{shopID}", method = RequestMethod.GET, produces = "application/json")
     public ShopOffer getOfferAndUpdatePhase(@PathVariable long shopID, @RequestParam(value = "phase") byte phase){
-        return getCacheService().getOfferAndUpdatePhase(shopID, phase);
+        return getCacheService().getOfferAndUpdatePhase(shopID, phase, getCurrentlyWarmingUp());
     }
 
     @RequestMapping(value = "/getUnmatchedOfferAndUpdatePhase/{shopID}", method = RequestMethod.GET, produces = "application/json")
@@ -48,6 +51,6 @@ public class CacheController {
 
     @RequestMapping(value = "/warmup/{shopID}", method = RequestMethod.GET)
     public void warmup(@PathVariable long shopID){
-        getCacheService().warmup(shopID);
+        getCacheService().warmup(shopID, getCurrentlyWarmingUp());
     }
 }

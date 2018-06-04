@@ -22,8 +22,6 @@ public class ShopOfferRepository {
         return getMongoTemplate().findOne(query(where("offerKey").is(offerKey)), ShopOffer.class, Long.toString(shopId));
     }
 
-    // convenience
-
     public ShopOffer getOfferAndUpdatePhase(long shopId, byte phase) {
         ShopOffer idealoOffer = getMongoTemplate()
                 .findOne(query(where("phase").is(phase)), ShopOffer.class , Long.toString(shopId));
@@ -48,7 +46,7 @@ public class ShopOfferRepository {
     }
 
     public void updatePhase(long shopId, byte oldPhase, byte newPhase) {
-        getMongoTemplate().updateMulti(query(where("phase").is(oldPhase)), update("phase", newPhase), ShopOffer.class, Long.toString(shopId));
+        getMongoTemplate().updateMulti(query(where("phase").is(oldPhase).and("isMatched").is(false)), update("phase", newPhase), ShopOffer.class, Long.toString(shopId));
     }
 
 
