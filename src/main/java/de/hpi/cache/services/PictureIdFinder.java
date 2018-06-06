@@ -2,9 +2,11 @@ package de.hpi.cache.services;
 
 import de.hpi.cache.dto.IdealoOffer;
 import de.hpi.cache.dto.Property;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+@Slf4j
 class PictureIdFinder {
 
     static List<Integer> findPictureId(List<IdealoOffer> idealoOffers) {
@@ -44,8 +46,12 @@ class PictureIdFinder {
     static String getImageId(String url, List<Integer> indices) {
         String[] urlParts = PictureIdFinder.splitUrl(url);
         String uniqueParts = "";
-        for (int position : indices) {
-            uniqueParts = uniqueParts.concat(urlParts[position]);
+        try{
+            for (int position : indices) {
+                uniqueParts = uniqueParts.concat(urlParts[position]);
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new IllegalArgumentException();
         }
 
         return uniqueParts.equals("")? null : uniqueParts;

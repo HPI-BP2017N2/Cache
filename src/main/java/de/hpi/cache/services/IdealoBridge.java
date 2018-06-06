@@ -12,39 +12,33 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.xml.ws.http.HTTPException;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Service
+@Slf4j
 class IdealoBridge {
 
     private final RestTemplate oAuthRestTemplate;
-
     private final IdealoBridgeProperties bridgeProperties;
-
     private final CacheProperties cacheProperties;
-
     private final UrlCleaner urlCleaner;
-
-    private static final Logger logger = LogManager.getLogger(IdealoBridge.class);
-
     private final ShopOfferRepository repository;
-
     private final Map<String, Pair<IdealoCategory, IdealoCategory>> higherLevelCategories = new HashMap<>();
 
 
@@ -54,10 +48,10 @@ class IdealoBridge {
             backoff = @Backoff(delay = 5000))
     void getOffers(long shopId, WarmingUpShops currentlyWarmingUp) {
         currentlyWarmingUp.addShop(shopId);
-        logger.info("Start fetching shop {}", shopId);
+        log.info("Start fetching shop {}", shopId);
         IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopId), IdealoOfferList.class);
-        logger.debug("Fetched shop {}.", shopId);
-        logger.debug("Start writing offers of {}.", shopId);
+        log.info("Fetched shop {}.", shopId);
+        log.info("Start writing offers of {}.", shopId);
 
         String rootUrl = getRootUrl(shopId);
         List<Integer> imageUrlsIdPosition = PictureIdFinder.findPictureId(offers.subList(0, Math.min(100, offers.size())));
@@ -65,7 +59,10 @@ class IdealoBridge {
 
         for (IdealoOffer offer : offers) {
             ShopOffer shopOffer = offer.toShopOffer();
-            shopOffer.setUrls(getCleanedUrls(shopId, rootUrl, offer.getUrls().getValue()));
+            if(offer.getUrls() != null) {
+                shopOffer.setUrls(getCleanedUrls(shopId, rootUrl, offer.getUrls().getValue()));
+            }
+
 
             if(offer.getMappedCatalogCategory() != null) {
                 Pair<IdealoCategory, IdealoCategory> categories = getCachedCategoryInformation(offer.getMappedCatalogCategory().getValue(), wantedCategoryLevel);
@@ -77,11 +74,16 @@ class IdealoBridge {
             Property<Map<String, List<String>>> imageUrls = offer.getImageUrls();
             if (imageUrls != null) {
                 String imageUrl = imageUrls.getValue().get(imageUrls.getValue().keySet().iterator().next()).get(0);
+                try {
                 shopOffer.setImageId(PictureIdFinder.getImageId(imageUrl, imageUrlsIdPosition));
+
+                } catch (IllegalArgumentException e) {
+                    log.info("Could not set image ID for offer {}", offer.getOfferKey().getValue());
+                }
             }
             getRepository().save(shopId, shopOffer);
         }
-        logger.info("Wrote {} offers of {}.", offers.size(), shopId);
+        log.info("Wrote {} offers of {}.", offers.size(), shopId);
         currentlyWarmingUp.removeShop(shopId);
         offers = null;
         System.gc();
@@ -150,9 +152,8 @@ class IdealoBridge {
     private String getCleanedUrl(long shopId, String dirtyUrl, String rootUrl) {
         try {
             return  getUrlCleaner().cleanUrl(dirtyUrl, shopId, rootUrl);
-        } catch (HTTPException e){
-            return dirtyUrl;
-        } catch (ResourceAccessException e) {
+        } catch (Exception e) {
+            log.info("Could not clean URL {}", dirtyUrl);
             return dirtyUrl;
         }
 
