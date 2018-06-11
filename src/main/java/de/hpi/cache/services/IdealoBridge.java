@@ -50,7 +50,7 @@ class IdealoBridge {
         currentlyWarmingUp.addShop(shopId);
         log.info("Start fetching shop {}", shopId);
         IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopId), IdealoOfferList.class);
-        log.info("Fetched shop {}.", shopId);
+        log.info("Fetched {} offers of {}.", offers.size(), shopId);
         log.info("Start writing offers of {}.", shopId);
 
         String rootUrl = getRootUrl(shopId);
