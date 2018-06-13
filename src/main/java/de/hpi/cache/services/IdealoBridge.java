@@ -22,10 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
@@ -48,7 +45,7 @@ class IdealoBridge {
             backoff = @Backoff(delay = 5000))
     void getOffers(long shopId, WarmingUpShops currentlyWarmingUp) {
         currentlyWarmingUp.addShop(shopId);
-        log.info("Start fetching shop {}", shopId);
+        log.info("Start fetching shop {} on {}", shopId, new Date());
         IdealoOfferList offers = getOAuthRestTemplate().getForObject(getOffersURI(shopId), IdealoOfferList.class);
         log.info("Fetched {} offers of {}.", offers.size(), shopId);
         log.info("Start writing offers of {}.", shopId);
@@ -83,7 +80,7 @@ class IdealoBridge {
             }
             getRepository().save(shopId, shopOffer);
         }
-        log.info("Wrote {} offers of {}.", offers.size(), shopId);
+        log.info("Wrote {} offers of {} on.", offers.size(), shopId, new Date());
         currentlyWarmingUp.removeShop(shopId);
         offers = null;
         System.gc();

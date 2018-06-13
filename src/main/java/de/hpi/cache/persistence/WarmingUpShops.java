@@ -4,13 +4,13 @@ package de.hpi.cache.persistence;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter(AccessLevel.PRIVATE)
 public class WarmingUpShops {
 
-    private final List<Long> currentlyWarmingUp = new LinkedList<>();
+    private final Set<Long> currentlyWarmingUp = new HashSet<>();
 
     public boolean isWarmingUp(long shopId) {
         return getCurrentlyWarmingUp().contains(shopId);
